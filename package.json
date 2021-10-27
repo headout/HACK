@@ -1,0 +1,13 @@
+{
+  "name": "hack",
+  "version": "1.0.0",
+  "description": "HACK - Hackout's Community Token",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "0x00",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2"
+  }
+}
