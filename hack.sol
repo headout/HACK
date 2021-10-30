@@ -61,6 +61,10 @@ contract HACK is ERC20 {
         Minting will not go below INITIAL_MINT/16.
     */
     function mint() external {
+        // This isn't per-se required since the mint always goes to HACKOUT_TREASURY_MULTISIG and is restrictive even to HACKOUT_TREASURY_MULTISIG on the same levels.
+        // Nevertheless, didn't want to be surprised to see newly minted HACKs every other year, lets say, when they are not actually required.
+        require(_msgSender() == HACKOUT_TREASURY_MULTISIG, "Only Hackout Tresury Multisig can mint.");
+
         // Get current year, assert validity and find diff.
         uint currentYear = _dateTime.getYear(block.timestamp);
         require(mapYearlyMint[currentYear] == 0, "Minting for the year already done.");
