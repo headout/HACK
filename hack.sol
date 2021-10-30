@@ -55,7 +55,7 @@ contract HACK is ERC20 {
     }
 
     /**
-        Mint fresh tokens. Can be minted by anyone but only transfers to Hackout's Treasury.
+        Mint fresh tokens. Can only be minted by Hackout's Treasury Multisig (not really a required restriction though).
         Tokens can only be minted once a year.
         Minting follows a Bitcoin style dis-inflationary distribution curve.
         Minting will not go below INITIAL_MINT/16.
@@ -63,6 +63,7 @@ contract HACK is ERC20 {
     function mint() external {
         // This isn't per-se required since the mint always goes to HACKOUT_TREASURY_MULTISIG and is restrictive even to HACKOUT_TREASURY_MULTISIG on the same levels.
         // Nevertheless, didn't want to be surprised to see newly minted HACKs every other year, lets say, when they are not actually required.
+        // Minting enabled to anyone did look cool though...
         require(_msgSender() == HACKOUT_TREASURY_MULTISIG, "Only Hackout Tresury Multisig can mint.");
 
         // Get current year, assert validity and find diff.
