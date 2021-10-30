@@ -19,16 +19,18 @@ contract HACK is ERC20 {
     //------------------------------
 
     // The initial mint.
-    uint32 constant INITIAL_MINT = 1000000;   // 1M
+    uint32 public constant INITIAL_MINT = 1000000;   // 1M
 
     // Hackout's Gnosis Safe Multisig.
-    address constant HACKOUT_TREASURY_MULTISIG = 0xd6752f76aA7B031030F8189Ef9799a5BE3abdf98;
+    address public constant HACKOUT_TREASURY_MULTISIG = 0xd6752f76aA7B031030F8189Ef9799a5BE3abdf98;
 
     // Map for actual mint count for corresponding year.
-    mapping(uint16 => uint32) mapYearlyMint;    // Will have a problem from year 65536 :)
+    // We could have used a `bool` value too, but lets just store the minted count for fun. It will increase contract used space though.
+    // We will support almost infinite years. :)
+    mapping(uint => uint32) public mapYearlyMint;
     
     // Year of deployment & first mint.
-    uint16 startYear;
+    uint public startYear;
     
     DateTime private _dateTime = new DateTime();
 
@@ -49,7 +51,7 @@ contract HACK is ERC20 {
         mapYearlyMint[startYear] = INITIAL_MINT;
 
         // MINT.
-        _mint(HACKOUT_TREASURY_MULTISIG, INITIAL_MINT * (10**18));   // Accounts for the default 18 decimals
+        _mint(HACKOUT_TREASURY_MULTISIG, uint256(INITIAL_MINT) * (10**18));   // Accounts for the default 18 decimals
     }
 
     /**
@@ -60,10 +62,10 @@ contract HACK is ERC20 {
     */
     function mint() external {
         // Get current year, assert validity and find diff.
-        uint16 currentYear = _dateTime.getYear(block.timestamp);
+        uint currentYear = _dateTime.getYear(block.timestamp);
         require(mapYearlyMint[currentYear] == 0, "Minting for the year already done.");
         assert(currentYear > startYear);
-        uint16 yearNumberFromStart;
+        uint yearNumberFromStart;
         unchecked {
             yearNumberFromStart = currentYear - startYear;
         }
@@ -110,11 +112,9 @@ contract HACK is ERC20 {
             mintAmount = 62618; // 62500+118 ; Brings the whole total to a forever 500 multiple. 
         if(yearNumberFromStart > 16)
             mintAmount = 62500;
-        assert(mintAmount < INITIAL_MINT);
-        assert(mintAmount != 0);
 
         // MINT.
         mapYearlyMint[currentYear] = mintAmount;
-        _mint(HACKOUT_TREASURY_MULTISIG, mintAmount * (10**18)); // Accounts for the default 18 decimals
+        _mint(HACKOUT_TREASURY_MULTISIG, uint256(mintAmount) * (10**18)); // Accounts for the default 18 decimals
     }    
 }
